@@ -12,7 +12,7 @@ import (
 	logo "log"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/jasonbronson/crawlmonster-api/library/log"
+	"github.com/jasonbronson/go-gin-boilerplate/library/log"
 	"github.com/joho/godotenv"
 	"github.com/newrelic/go-agent/v3/integrations/nrredis-v7"
 	_ "github.com/newrelic/go-agent/v3/integrations/nrsqlite3"

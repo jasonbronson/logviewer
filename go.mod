@@ -1,4 +1,4 @@
-module github.com/jasonbronson/crawlmonster-api
+module github.com/jasonbronson/go-gin-boilerplate
 
 go 1.16
 

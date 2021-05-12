@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/jasonbronson/crawlmonster-api/config"
+	"github.com/jasonbronson/go-gin-boilerplate/config"
 
 	"github.com/robfig/cron/v3"
 )

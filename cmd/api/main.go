@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jasonbronson/crawlmonster-api/library/log"
-	"github.com/jasonbronson/crawlmonster-api/transport"
+	"github.com/jasonbronson/go-gin-boilerplate/library/log"
+	"github.com/jasonbronson/go-gin-boilerplate/transport"
 
-	"github.com/jasonbronson/crawlmonster-api/config"
+	"github.com/jasonbronson/go-gin-boilerplate/config"
 )
 
 func main() {
