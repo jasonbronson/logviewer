@@ -16,5 +16,3 @@ buildcron:
 
 local: 
 	docker-compose up
-
-

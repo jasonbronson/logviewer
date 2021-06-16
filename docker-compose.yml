@@ -12,6 +12,8 @@ services:
       - "${PORT}:${PORT}"
     env_file:
       - ./.env
+    networks:
+      - backend
   cron:
     build:
       context: .
@@ -21,3 +23,12 @@ services:
     env_file: ./.env
     volumes:
       - .:/app
+    networks:
+      - backend
+  redis:
+    image: redis:6.2.4-alpine
+    networks:
+      - backend
+
+networks:
+  backend:

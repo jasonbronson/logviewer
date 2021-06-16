@@ -1,6 +1,8 @@
 package transport
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func HealthCheck(g *gin.Context) {
 	g.Writer.Header().Set("Content-Type", "application/json")
