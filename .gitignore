@@ -2,7 +2,6 @@ dist/*
 .env
 db/*
 bin/*
-logs/*
 tmp/*
 frontend/node_modules
 frontend/dist
