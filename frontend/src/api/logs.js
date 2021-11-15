@@ -20,7 +20,7 @@ export const logs = {
         paging = `?pageOffset=${pageOffset}&pageLimit=${pageLimit}`
       }
       return await axios.get(
-        `/logs/${table}${paging}`
+        `/logs${table}${paging}`
       );
     } catch (err) {
       if (err.response) {

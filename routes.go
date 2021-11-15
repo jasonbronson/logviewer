@@ -46,6 +46,11 @@ func Router(newRelicApp *newrelic.Application) http.Handler {
 	router.GET("/", transport.HealthCheck)
 	router.GET("/healthz", transport.HealthCheck)
 
+	api := router.Group("/api")
+	{
+		api.GET("/logs", transport.GetLogs)
+	}
+
 	//Performance verify key on load forge
 	// loaderVerification := os.Getenv("LOAD_FORGE")
 	// if loaderVerification != "" {

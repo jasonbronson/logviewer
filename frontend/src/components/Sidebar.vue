@@ -31,6 +31,7 @@
           :index="index + 1"
           v-for="(log, index) in listLogs"
           @click="showTable(log.Name)"
+          :key="index"
         >
           <i class="el-icon-caret-right"></i>
           <span>{{ log.Name }}</span>
