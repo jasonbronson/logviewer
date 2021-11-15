@@ -1,4 +1,4 @@
-module github.com/jasonbronson/go-gin-boilerplate
+module github.com/jasonbronson/logreader
 
 go 1.16
 

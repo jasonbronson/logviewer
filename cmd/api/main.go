@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jasonbronson/go-gin-boilerplate/library/log"
-	"github.com/jasonbronson/go-gin-boilerplate/transport"
+	"github.com/jasonbronson/logreader/library/log"
+	"github.com/jasonbronson/logreader/transport"
 
-	"github.com/jasonbronson/go-gin-boilerplate/config"
+	"github.com/jasonbronson/logreader/config"
 )
 
 func main() {
