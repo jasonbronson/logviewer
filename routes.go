@@ -1,4 +1,4 @@
-package transport
+package main
 
 import (
 	"embed"
@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/jasonbronson/logreader/transport"
 	"github.com/newrelic/go-agent/v3/integrations/nrgin"
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
@@ -42,8 +43,8 @@ func Router(newRelicApp *newrelic.Application) http.Handler {
 	// 	pprof.Register(router, "debug")
 	// }
 
-	router.GET("/", HealthCheck)
-	router.GET("/healthz", HealthCheck)
+	router.GET("/", transport.HealthCheck)
+	router.GET("/healthz", transport.HealthCheck)
 
 	//Performance verify key on load forge
 	// loaderVerification := os.Getenv("LOAD_FORGE")

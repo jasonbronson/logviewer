@@ -1,5 +1,5 @@
 APP_NAME   := api
-APP_DIR := ./cmd/api
+APP_DIR := ./*.go
 DIST_DIR = ./dist
 
 setup:
@@ -12,7 +12,7 @@ build: ## Build go binary
 	go build -o ${DIST_DIR}/${APP_NAME} ${APP_DIR}
 
 buildcron: 
-	go build -o ${DIST_DIR}/cron ./cmd/cron/main.go
+	go build -o ${DIST_DIR}/cron ./transport/cron.go
 
 local: 
 	docker-compose up

@@ -8,6 +8,7 @@ services:
     command: CompileDaemon -log-prefix=false -build="make build" -command="./dist/api"
     volumes:
       - ./:/app
+      - ./frontend:/app/dist
     ports:
       - "${PORT}:${PORT}"
     env_file:

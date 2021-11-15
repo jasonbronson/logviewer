@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/pprof v1.3.0
+	github.com/gin-contrib/static v0.0.1 // indirect
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/joho/godotenv v1.3.0

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/jasonbronson/logreader/library/log"
-	"github.com/jasonbronson/logreader/transport"
 
 	"github.com/jasonbronson/logreader/config"
 )
@@ -14,7 +13,7 @@ import (
 func main() {
 
 	newRelicApp := config.NewRelicApp()
-	r := transport.Router(newRelicApp)
+	r := Router(newRelicApp)
 
 	log.Printf("Listening to http://0.0.0.0:%v/", strconv.Itoa(config.Cfg.Port))
 
