@@ -1,14 +1,25 @@
 <template>
-  <el-tabs type="card" @tab-click="handleClick">
-    <el-tab-pane label="Structure"
-      ><structure :columns="columns" :sql="sql"
-    /></el-tab-pane>
-    <el-tab-pane label="Content"
-      ><content :tablecontent="tablecontent"
-    /></el-tab-pane>
-    <el-tab-pane label="Import"><import /></el-tab-pane>
-    <el-tab-pane label="Drop"><drop /></el-tab-pane>
-  </el-tabs>
+  <div class="content-page">
+    <div class="content-body">
+        <!-- <el-tabs type="card" @tab-click="handleClick">
+        <el-tab-pane label="Structure"
+          ><structure :columns="columns" :sql="sql"
+        /></el-tab-pane>
+        <el-tab-pane label="Content"
+          ><content :tablecontent="tablecontent"
+        /></el-tab-pane>
+        <el-tab-pane label="Import"><import /></el-tab-pane>
+        <el-tab-pane label="Drop"><drop /></el-tab-pane>
+      </el-tabs> -->
+      <div  v-for="(content,idx) in logcontent" :key="idx" class="content-item">
+        <span>{{content}}</span>
+      </div>
+    </div>
+    <div class="search">
+      <input placeholder="Enter text for searching...">
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -26,50 +37,43 @@ export default {
       tabledata: [],
       sql: "",
       columns: [],
-      tablecontent: [],
+      logcontent: [],
       pageOffset: 0,
       pageLimit: 10,
     };
   },
   computed: {
-    getSelectedTable() {
-      return this.$store.state.selectedTable;
+    getSelectedLog() {
+      return this.$store.state.selectedLog;
     },
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(event.target.outerText);
-      if (event.target.outerText === "Content") {
-        this.loadContent();
-      }
-    },
-    loadContent() {
-      api.table
-        .getTableContent(this.getSelectedTable, this.pageOffset, this.pageLimit)
+    // handleClick(tab, event) {
+    //   console.log(event.target.outerText);
+    //   if (event.target.outerText === "Content") {
+    //     this.loadContent();
+    //   }
+    // },
+    // loadContent() {
+    //   api.table
+    //     .getTableContent(this.getSelectedTable, this.pageOffset, this.pageLimit)
+    //     .then((res) => {
+    //       console.log(res);
+    //       this.tablecontent = res.data;
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
+    changeTable() {
+      api.logs
+        .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
         .then((res) => {
           console.log(res);
-          this.tablecontent = res.data;
+          this.logcontent = res.data.Content;
         })
         .catch((err) => {
           console.log(err);
-        });
-    },
-    changeTable() {
-      let tables = this.$store.state.tables;
-      tables.forEach((item) => {
-        if (item.Name == this.$store.state.selectedTable) {
-          this.sql = item.SQL;
-        }
-      });
-      api.structure
-        .getColumns(this.$store.state.selectedTable)
-        .then((response) => {
-          if (response.status == 200) {
-            this.columns = response.data;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
     // createdatabase() {
@@ -88,7 +92,7 @@ export default {
     // },
   },
   watch: {
-    getSelectedTable(newValue, oldValue) {
+    getSelectedLog(newValue, oldValue) {
       console.log(oldValue, newValue);
       this.changeTable();
     },
@@ -98,4 +102,19 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.content-page {
+  height: 100%;
+}
+.content-body {
+  padding: 0 10px;
+}
+.content-item {
+  padding-bottom: 10px;
+  text-align: left;
+}
+.search input{
+  width: 100%;
+  height: 30px;
+}
+</style>

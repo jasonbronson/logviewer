@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Home";
-
 const routes = [
   {
     // Document title tag
@@ -16,7 +15,7 @@ const routes = [
     meta: {
       title: "Log",
     },
-    path: "/log",
+    path: "/log/:logname",
     name: "log",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route

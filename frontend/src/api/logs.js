@@ -29,4 +29,22 @@ export const logs = {
       return err;
     }
   },
+  async getLogContent(filename, pageOffset, pageLimit) {
+    try {
+      let paging = "";
+      if(filename == undefined){
+        filename = "";
+      }else{
+        paging = `?pageOffset=${pageOffset}&pageLimit=${pageLimit}`
+      }
+      return await axios.get(
+        `/logs/${filename}${paging}`
+      );
+    } catch (err) {
+      if (err.response) {
+        return err.response.data;
+      }
+      return err;
+    }
+  },
 };

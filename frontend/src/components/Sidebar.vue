@@ -30,7 +30,7 @@
         <el-menu-item
           :index="index + 1"
           v-for="(log, index) in listLogs"
-          @click="showTable(log.Name)"
+          @click="showLog(log.Name)"
           :key="index"
         >
           <i class="el-icon-caret-right"></i>

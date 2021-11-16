@@ -49,6 +49,7 @@ func Router(newRelicApp *newrelic.Application) http.Handler {
 	api := router.Group("/api")
 	{
 		api.GET("/logs", transport.GetLogs)
+		api.GET("/logs/:filename", transport.GetLog)
 	}
 
 	//Performance verify key on load forge
