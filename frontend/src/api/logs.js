@@ -47,4 +47,16 @@ export const logs = {
       return err;
     }
   },
+  async getSearchContent(filename, keysearch, pageLimit) {
+    try {
+      return await axios.get(
+        `/logs/search/${filename}?searchKey=${keysearch}&pageLimit=${pageLimit}`
+      );
+    } catch (err) {
+      if (err.response) {
+        return err.response.data;
+      }
+      return err;
+    }
+  },
 };

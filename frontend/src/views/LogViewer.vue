@@ -16,7 +16,8 @@
       </div>
     </div>
     <div class="search">
-      <input placeholder="Enter text for searching...">
+      <input placeholder="Enter text for searching..." v-model="searchKey" class="search-input">
+      <button @click="searchHandle()" class="search-btn">Search</button>
     </div>
   </div>
 
@@ -39,7 +40,9 @@ export default {
       columns: [],
       logcontent: [],
       pageOffset: 0,
-      pageLimit: 10,
+      pageLimit: 20,
+      reload: null,
+      searchKey : "",
     };
   },
   computed: {
@@ -65,7 +68,20 @@ export default {
     //       console.log(err);
     //     });
     // },
+    searchHandle() {
+      clearInterval(this.reload)
+      api.logs
+        .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
+        .then((res) => {
+          console.log(res);
+          this.logcontent = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     changeTable() {
+      this.searchKey = ""
       api.logs
         .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
         .then((res) => {
@@ -93,12 +109,19 @@ export default {
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
+      clearInterval(this.reload)
       console.log(oldValue, newValue);
       this.changeTable();
-    },
+      this.reload = setInterval(() => {
+        this.changeTable()
+      }, 30000)
+      },
   },
   mounted() {
-    this.changeTable();
+    this.changeTable()
+    this.reload = setInterval(() => {
+      this.changeTable()
+    }, 30000)
   },
 };
 </script>
@@ -108,13 +131,22 @@ export default {
 }
 .content-body {
   padding: 0 10px;
+  height: 80vh;
+  overflow-y: scroll;
 }
 .content-item {
   padding-bottom: 10px;
   text-align: left;
 }
 .search input{
-  width: 100%;
+  width: 85%;
   height: 30px;
+  margin-right: 10px;
+}
+.search button {
+  width: 10%;
+  height: 35px;
+  background-color: #c6ddfc;
+  border: none;
 }
 </style>
