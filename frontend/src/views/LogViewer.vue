@@ -1,7 +1,7 @@
 <template>
   <div class="content-page">
     <div class="content-body">
-        <!-- <el-tabs type="card" @tab-click="handleClick">
+      <!-- <el-tabs type="card" @tab-click="handleClick">
         <el-tab-pane label="Structure"
           ><structure :columns="columns" :sql="sql"
         /></el-tab-pane>
@@ -11,16 +11,19 @@
         <el-tab-pane label="Import"><import /></el-tab-pane>
         <el-tab-pane label="Drop"><drop /></el-tab-pane>
       </el-tabs> -->
-      <div  v-for="(content,idx) in logcontent" :key="idx" class="content-item">
-        <span>{{content}}</span>
+      <div v-for="(content, idx) in logcontent" :key="idx" class="content-item">
+        <span>{{ content }}</span>
       </div>
     </div>
     <div class="search">
-      <input placeholder="Enter text for searching..." v-model="searchKey" class="search-input">
+      <input
+        placeholder="Enter text for searching..."
+        v-model="searchKey"
+        class="search-input"
+      />
       <button @click="searchHandle()" class="search-btn">Search</button>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -42,7 +45,7 @@ export default {
       pageOffset: 0,
       pageLimit: 20,
       reload: null,
-      searchKey : "",
+      searchKey: "",
     };
   },
   computed: {
@@ -69,7 +72,7 @@ export default {
     //     });
     // },
     searchHandle() {
-      clearInterval(this.reload)
+      clearInterval(this.reload);
       api.logs
         .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
         .then((res) => {
@@ -81,7 +84,7 @@ export default {
         });
     },
     changeTable() {
-      this.searchKey = ""
+      this.searchKey = "";
       api.logs
         .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
         .then((res) => {
@@ -109,19 +112,19 @@ export default {
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
-      clearInterval(this.reload)
+      clearInterval(this.reload);
       console.log(oldValue, newValue);
       this.changeTable();
       this.reload = setInterval(() => {
-        this.changeTable()
-      }, 30000)
-      },
+        this.changeTable();
+      }, 30000);
+    },
   },
   mounted() {
-    this.changeTable()
+    this.changeTable();
     this.reload = setInterval(() => {
-      this.changeTable()
-    }, 30000)
+      this.changeTable();
+    }, 30000);
   },
 };
 </script>
@@ -138,7 +141,7 @@ export default {
   padding-bottom: 10px;
   text-align: left;
 }
-.search input{
+.search input {
   width: 85%;
   height: 30px;
   margin-right: 10px;
@@ -148,5 +151,25 @@ export default {
   height: 35px;
   background-color: #c6ddfc;
   border: none;
+}
+.base-time {
+  color: #75715e;
+}
+.base-host {
+  color: #c63;
+  border-color: #c63;
+}
+.base-app {
+  color: #66d9ef;
+  border-color: #66d9ef;
+}
+.base-text {
+  color: #272822 !important;
+}
+.base-lvl-warn {
+  background-color: #fd971f;
+}
+.base-lvl-error {
+  background-color: #f92672;
 }
 </style>
