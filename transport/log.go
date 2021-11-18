@@ -31,8 +31,8 @@ func GetLogContent(g *gin.Context) {
 	// content = strings.Split(string(out), "\n")
 
 	log.Print(limit)
-	//limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, "", true)
+	limitLine, _ := strconv.Atoi(limit)
+	res := getLogData(fileName, "", true, limitLine)
 	// if len(res) >= 20 {
 	// 	res = res[len(res)-limitLine:]
 	// }
@@ -68,7 +68,7 @@ func SearchLog(g *gin.Context) {
 	searchKey := g.Query("searchKey")
 
 	limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, searchKey, false)
+	res := getLogData(fileName, searchKey, false, limitLine)
 	if len(res) >= 20 {
 		res = res[len(res)-limitLine:]
 	}
@@ -76,7 +76,7 @@ func SearchLog(g *gin.Context) {
 	g.JSON(http.StatusOK, res)
 }
 
-func getLogData(fileName, searchKey string, last1K bool) []string {
+func getLogData(fileName, searchKey string, last1K bool, pageLimit int) []string {
 	file, err := os.Open("./logs/" + fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -88,27 +88,31 @@ func getLogData(fileName, searchKey string, last1K bool) []string {
 		log.Fatal(err)
 	}
 
-	totalLines := 0
 	if last1K {
-		totalLines, _ = lineCounter(file)
-		seekPosition := totalLines - 1000
-		scanLines := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-			advance, token, err = bufio.ScanLines(data, atEOF)
-			seekPosition += advance
+		var pos int
+		totalLines, _ := lineCounter(fileName)
+		seekPosition := totalLines - pageLimit
+
+		scanner.Split(func(data []byte, atEof bool) (advance int, token []byte, err error) {
+			advance, token, err = bufio.ScanLines(data, atEof)
+			pos += advance
 			return
+		})
+
+		for i := 0; i <= seekPosition; i++ {
+			if !scanner.Scan() {
+				log.Println("EOF")
+			}
 		}
-		scanner.Split(scanLines)
 	}
-
 	for scanner.Scan() {
-
 		if len(searchKey) > 0 && strings.Contains(scanner.Text(), searchKey) {
 			result = append(result, scanner.Text())
-		} else {
+		} 
+		if len(searchKey) <= 0 {
 			//result = append(result, LogLineFormat(scanner.Text(), "json"))
 			result = append(result, scanner.Text())
 		}
-		// fmt.Println(scanner.Text())
 	}
 	return result
 }
@@ -124,7 +128,12 @@ func LogLineFormat(line string, formatType string) string {
 	return result
 }
 
-func lineCounter(r io.Reader) (int, error) {
+func lineCounter(fileName string) (int, error) {
+	r, err := os.Open("./logs/" + fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer r.Close()
 	buf := make([]byte, 32*1024)
 	count := 0
 	lineSep := []byte{'\n'}
