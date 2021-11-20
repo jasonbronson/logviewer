@@ -90,10 +90,15 @@ export default {
         });
     },
     changeLog() {
+      this.nothingFound = false;
       this.searchKey = "";
       api.logs
         .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
         .then((res) => {
+          if (!res.data.Content) {
+            this.nothingFound = true;
+            return;
+          }
           this.logcontent = res.data.Content;
         })
         .catch((err) => {
