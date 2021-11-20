@@ -17,7 +17,7 @@
         class="content-item"
         ref="logviewer"
       >
-        <span>{{ content }}</span>
+        <span v-html="highlight(content)"></span>
       </div>
     </div>
     <div class="search">
@@ -60,6 +60,18 @@ export default {
     },
   },
   methods: {
+    highlight(data) {
+      //console.log("********", this.searchKey, data);
+      if (!this.searchKey || !data) return data;
+      if (data != typeof string) {
+        //data = data.toString();
+        return data;
+      }
+      var regex = new RegExp(this.searchKey, "gi");
+      return data.replace(regex, function(str) {
+        return "<span style='background-color: yellow;'>" + str + "</span>";
+      });
+    },
     scrollToElement() {
       const el = this.$refs.logviewer;
       if (el) {
@@ -72,8 +84,7 @@ export default {
       api.logs
         .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
         .then((res) => {
-          console.log(res);
-          this.logcontent = res.data;
+          this.logcontent = res;
         })
         .catch((err) => {
           console.log(err);
@@ -84,7 +95,6 @@ export default {
       api.logs
         .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
         .then((res) => {
-          console.log(res);
           this.logcontent = res.data.Content;
         })
         .catch((err) => {
@@ -95,19 +105,19 @@ export default {
   watch: {
     getSelectedLog(newValue, oldValue) {
       clearInterval(this.reload);
-      console.log(oldValue, newValue);
+      //console.log(oldValue, newValue);
       this.changeLog();
-      this.reload = setInterval(() => {
-        this.changeLog();
-      }, 5000);
+      // this.reload = setInterval(() => {
+      //   this.changeLog();
+      // }, 5000);
     },
   },
   mounted() {
     this.changeLog();
-    this.reload = setInterval(() => {
-      this.changeLog();
-      this.scrollToElement();
-    }, 30000);
+    // this.reload = setInterval(() => {
+    //   this.changeLog();
+    //   this.scrollToElement();
+    // }, 5000);
     this.scrollToElement();
   },
 };

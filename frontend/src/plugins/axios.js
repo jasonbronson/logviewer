@@ -11,12 +11,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     // const token = localstorage.getToken()
-    const dbName = store.state.dbName;
-    console.log("**", dbName);
-    if (dbName) {
-      config.headers["Database"] = dbName;
-    }
-
+    
     // let authToken = `Bearer ${token || process.env.DEVICE_TOKEN}`
     let authToken;
     if (
