@@ -32,7 +32,7 @@ func GetLogContent(g *gin.Context) {
 
 	log.Print(limit)
 	limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, "", true, limitLine)
+	res := getLogData(fileName, "", limitLine)
 	// if len(res) >= 20 {
 	// 	res = res[len(res)-limitLine:]
 	// }
@@ -68,7 +68,7 @@ func SearchLog(g *gin.Context) {
 	searchKey := g.Query("searchKey")
 
 	limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, searchKey, false, limitLine)
+	res := getLogData(fileName, searchKey, limitLine)
 	if len(res) >= 20 {
 		res = res[len(res)-limitLine:]
 	}
@@ -76,7 +76,7 @@ func SearchLog(g *gin.Context) {
 	g.JSON(http.StatusOK, res)
 }
 
-func getLogData(fileName, searchKey string, last1K bool, pageLimit int) []string {
+func getLogData(fileName, searchKey string, pageLimit int) []string {
 	file, err := os.Open("./logs/" + fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -88,27 +88,26 @@ func getLogData(fileName, searchKey string, last1K bool, pageLimit int) []string
 		log.Fatal(err)
 	}
 
-	if last1K {
-		var pos int
-		totalLines, _ := lineCounter(fileName)
-		seekPosition := totalLines - pageLimit
+	var pos int
+	totalLines, _ := lineCounter(fileName)
+	seekPosition := totalLines - pageLimit
 
-		scanner.Split(func(data []byte, atEof bool) (advance int, token []byte, err error) {
-			advance, token, err = bufio.ScanLines(data, atEof)
-			pos += advance
-			return
-		})
+	scanner.Split(func(data []byte, atEof bool) (advance int, token []byte, err error) {
+		advance, token, err = bufio.ScanLines(data, atEof)
+		pos += advance
+		return
+	})
 
-		for i := 0; i <= seekPosition; i++ {
-			if !scanner.Scan() {
-				log.Println("EOF")
-			}
+	for i := 0; i <= seekPosition; i++ {
+		if !scanner.Scan() {
+			log.Println("EOF")
 		}
 	}
+
 	for scanner.Scan() {
 		if len(searchKey) > 0 && strings.Contains(scanner.Text(), searchKey) {
 			result = append(result, scanner.Text())
-		} 
+		}
 		if len(searchKey) <= 0 {
 			//result = append(result, LogLineFormat(scanner.Text(), "json"))
 			result = append(result, scanner.Text())

@@ -1,21 +1,30 @@
 <template>
   <el-form ref="form" :model="form">
     <el-form-item>
-      <el-button type="primary" @click="reloadLogs">Reload Log Files</el-button>
+      <el-button type="primary" @click="reloadLogs"
+        >{{ btntext }} Log Files</el-button
+      >
     </el-form-item>
   </el-form>
 </template>
 
 <script>
 import api from "@/api";
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 export default {
   name: "Home",
   components: {},
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      logs: (state) => state.logs,
+    }),
+    btntext() {
+      return this.logs.length > 0 ? "Refresh" : "Load";
+    },
+  },
   methods: {
     ...mapMutations(["setLogs"]),
     reloadLogs() {
@@ -28,6 +37,12 @@ export default {
             title: "Success",
             message: "Getting logs succeeded",
           });
+          if (response.data.logs[0].Name) {
+            let logName = response.data.logs[0].Name;
+            console.log("Selected Log:", logName);
+            this.$store.commit("setSelectedLog", logName);
+            this.$router.push(`/log/${logName}`);
+          }
         }
         if (!success) {
           this.$notify.error({

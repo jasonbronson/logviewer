@@ -11,7 +11,12 @@
         <el-tab-pane label="Import"><import /></el-tab-pane>
         <el-tab-pane label="Drop"><drop /></el-tab-pane>
       </el-tabs> -->
-      <div v-for="(content, idx) in logcontent" :key="idx" class="content-item">
+      <div
+        v-for="(content, idx) in logcontent"
+        :key="idx"
+        class="content-item"
+        ref="logviewer"
+      >
         <span>{{ content }}</span>
       </div>
     </div>
@@ -20,6 +25,7 @@
         placeholder="Enter text for searching..."
         v-model="searchKey"
         class="search-input"
+        @keyup.enter="searchHandle()"
       />
       <button @click="searchHandle()" class="search-btn">Search</button>
     </div>
@@ -54,23 +60,13 @@ export default {
     },
   },
   methods: {
-    // handleClick(tab, event) {
-    //   console.log(event.target.outerText);
-    //   if (event.target.outerText === "Content") {
-    //     this.loadContent();
-    //   }
-    // },
-    // loadContent() {
-    //   api.table
-    //     .getTableContent(this.getSelectedTable, this.pageOffset, this.pageLimit)
-    //     .then((res) => {
-    //       console.log(res);
-    //       this.tablecontent = res.data;
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
+    scrollToElement() {
+      const el = this.$refs.logviewer;
+      if (el) {
+        // Use el.scrollIntoView() to instantly scroll to the element
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    },
     searchHandle() {
       clearInterval(this.reload);
       api.logs
@@ -83,7 +79,7 @@ export default {
           console.log(err);
         });
     },
-    changeTable() {
+    changeLog() {
       this.searchKey = "";
       api.logs
         .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
@@ -95,36 +91,24 @@ export default {
           console.log(err);
         });
     },
-    // createdatabase() {
-    //   this.axios
-    //     .post("/table/create?table=" + this.createtablename)
-    //     .then((response) => {
-    //       console.log(response);
-    //       if (response.data === "Success") {
-    //         this.createtablename = "";
-    //         this.loadData();
-    //         //throw success msg
-    //       } else {
-    //         //throw error msg
-    //       }
-    //     });
-    // },
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
       clearInterval(this.reload);
       console.log(oldValue, newValue);
-      this.changeTable();
+      this.changeLog();
       this.reload = setInterval(() => {
-        this.changeTable();
-      }, 30000);
+        this.changeLog();
+      }, 5000);
     },
   },
   mounted() {
-    this.changeTable();
+    this.changeLog();
     this.reload = setInterval(() => {
-      this.changeTable();
+      this.changeLog();
+      this.scrollToElement();
     }, 30000);
+    this.scrollToElement();
   },
 };
 </script>
@@ -140,6 +124,9 @@ export default {
 .content-item {
   padding-bottom: 10px;
   text-align: left;
+}
+.search {
+  padding: 10px;
 }
 .search input {
   width: 85%;
