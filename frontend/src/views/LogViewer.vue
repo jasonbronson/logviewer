@@ -2,12 +2,16 @@
   <div class="content-page">
     <div class="content-body">
       <div
+        v-if="!nothingFound"
         v-for="(content, idx) in logcontent"
         :key="idx"
         class="content-item"
         ref="logviewer"
       >
         <span v-html="highlight(content)"></span>
+      </div>
+      <div v-if="nothingFound">
+        Nothing Found in Search
       </div>
     </div>
     <div class="search">
@@ -42,6 +46,7 @@ export default {
       pageLimit: 20,
       reload: null,
       searchKey: "",
+      nothingFound: false,
     };
   },
   computed: {
@@ -69,10 +74,15 @@ export default {
       }
     },
     searchHandle() {
+      this.nothingFound = false;
       clearInterval(this.reload);
       api.logs
         .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
         .then((res) => {
+          if (!res.data) {
+            this.nothingFound = true;
+            return;
+          }
           this.logcontent = res.data;
         })
         .catch((err) => {
