@@ -1,16 +1,6 @@
 <template>
   <div class="content-page">
     <div class="content-body">
-      <!-- <el-tabs type="card" @tab-click="handleClick">
-        <el-tab-pane label="Structure"
-          ><structure :columns="columns" :sql="sql"
-        /></el-tab-pane>
-        <el-tab-pane label="Content"
-          ><content :tablecontent="tablecontent"
-        /></el-tab-pane>
-        <el-tab-pane label="Import"><import /></el-tab-pane>
-        <el-tab-pane label="Drop"><drop /></el-tab-pane>
-      </el-tabs> -->
       <div
         v-for="(content, idx) in logcontent"
         :key="idx"
@@ -62,10 +52,9 @@ export default {
   methods: {
     highlight(data) {
       //console.log("********", this.searchKey, data);
-      if (!this.searchKey || !data) return data;
+      if (!this.searchKey) return data;
       if (data != typeof string) {
-        //data = data.toString();
-        return data;
+        data = data.toString();
       }
       var regex = new RegExp(this.searchKey, "gi");
       return data.replace(regex, function(str) {
@@ -84,7 +73,7 @@ export default {
       api.logs
         .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
         .then((res) => {
-          this.logcontent = res;
+          this.logcontent = res.data;
         })
         .catch((err) => {
           console.log(err);
