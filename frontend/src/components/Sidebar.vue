@@ -1,6 +1,6 @@
 <template>
   <el-aside class="sidebar">
-    <p>Log Reader</p>
+    <p>Log Viewer</p>
     <el-menu
       :default-active="activeMenuItem"
       class="el-menu"
