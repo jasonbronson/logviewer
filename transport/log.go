@@ -18,6 +18,7 @@ import (
 func GetLogContent(g *gin.Context) {
 	fileName := g.Param("filename")
 	limit := g.Query("pageLimit")
+	offset := g.Query("pageOffset")
 	var logFile Log
 	//var res []string
 
@@ -30,9 +31,9 @@ func GetLogContent(g *gin.Context) {
 	// }
 	// content = strings.Split(string(out), "\n")
 
-	log.Print(limit)
 	limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, "", limitLine)
+	pageOffset, _ := strconv.Atoi(offset)
+	res := getLogData(fileName, "", limitLine, pageOffset)
 	// if len(res) >= 20 {
 	// 	res = res[len(res)-limitLine:]
 	// }
@@ -40,12 +41,11 @@ func GetLogContent(g *gin.Context) {
 		Name:    fileName,
 		Content: res,
 	}
-
 	g.Writer.Header().Set("Content-Type", "application/json")
 	g.JSON(http.StatusOK, logFile)
 }
 
-func GetLogs(g *gin.Context) {
+func GetLogFiles(g *gin.Context) {
 	//read folder to get filename
 	files, err := ioutil.ReadDir("./logs/")
 	if err != nil {
@@ -65,18 +65,20 @@ func GetLogs(g *gin.Context) {
 func SearchLog(g *gin.Context) {
 	fileName := g.Param("filename")
 	limit := g.Query("pageLimit")
+	offset := g.Query("pageOffset")
 	searchKey := g.Query("searchKey")
 
 	limitLine, _ := strconv.Atoi(limit)
-	res := getLogData(fileName, searchKey, limitLine)
-	if len(res) >= 20 {
-		res = res[len(res)-limitLine:]
-	}
+	pageOffset, _ := strconv.Atoi(offset)
+	res := getLogData(fileName, searchKey, limitLine, pageOffset)
+	// if len(res) >= 20 {
+	// 	res = res[len(res)-limitLine:]
+	// }
 
 	g.JSON(http.StatusOK, res)
 }
 
-func getLogData(fileName, searchKey string, pageLimit int) []string {
+func getLogData(fileName, searchKey string, pageLimit int, pageOffset int) []string {
 	file, err := os.Open("./logs/" + fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -90,28 +92,33 @@ func getLogData(fileName, searchKey string, pageLimit int) []string {
 
 	var pos int
 	totalLines, _ := lineCounter(fileName)
-	seekPosition := totalLines - pageLimit
-
+	seekPosition := totalLines - pageOffset
+	log.Println("seek", seekPosition, "count ", totalLines)
 	scanner.Split(func(data []byte, atEof bool) (advance int, token []byte, err error) {
 		advance, token, err = bufio.ScanLines(data, atEof)
 		pos += advance
 		return
 	})
-
 	for i := 0; i <= seekPosition; i++ {
 		if !scanner.Scan() {
 			log.Println("EOF")
 		}
 	}
-
+	cursor := 0
 	for scanner.Scan() {
-		if len(searchKey) > 0 && strings.Contains(scanner.Text(), searchKey) {
+		results := strings.ToLower(scanner.Text())
+		searchKey = strings.ToLower(searchKey)
+		if len(searchKey) > 0 && strings.Contains(results, searchKey) {
 			result = append(result, scanner.Text())
 		}
 		if len(searchKey) <= 0 {
 			//result = append(result, LogLineFormat(scanner.Text(), "json"))
 			result = append(result, scanner.Text())
 		}
+		if cursor >= pageLimit {
+			break
+		}
+		cursor++
 	}
 	return result
 }

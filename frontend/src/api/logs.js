@@ -1,16 +1,6 @@
 import { instance as axios } from "../plugins/axios";
 
 export const logs = {
-  // async setLogs(table) {
-  //   try {
-  //     return await axios.post("/logs/create/" + table);
-  //   } catch (err) {
-  //     if (err.response) {
-  //       return err.response.data;
-  //     }
-  //     return err;
-  //   }
-  // },
   async getLogs(table, pageOffset, pageLimit) {
     try {
       let paging = "";
@@ -47,10 +37,10 @@ export const logs = {
       return err;
     }
   },
-  async getSearchContent(filename, keysearch, pageLimit) {
+  async getSearchContent(filename, keysearch, pageLimit, pageOffset) {
     try {
       return await axios.get(
-        `/logs/search/${filename}?searchKey=${keysearch}&pageLimit=${pageLimit}`
+        `/logs/search/${filename}?searchKey=${keysearch}&pageLimit=${pageLimit}&pageOffset=${pageOffset}`
       );
     } catch (err) {
       if (err.response) {

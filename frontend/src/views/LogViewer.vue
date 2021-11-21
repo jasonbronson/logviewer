@@ -1,6 +1,6 @@
 <template>
   <div class="content-page">
-    <div class="content-body">
+    <div class="content-body" v-on:scroll="handleScroll">
       <div
         v-if="!nothingFound"
         v-for="(content, idx) in logcontent"
@@ -42,11 +42,12 @@ export default {
       sql: "",
       columns: [],
       logcontent: [],
-      pageOffset: 0,
+      pageOffset: 20,
       pageLimit: 20,
       reload: null,
       searchKey: "",
       nothingFound: false,
+      loadingLogs: false,
     };
   },
   computed: {
@@ -55,6 +56,13 @@ export default {
     },
   },
   methods: {
+    handleScroll(event) {
+      if (!this.loadingLogs && event.target.scrollTop < 80) {
+        console.log("scrolling ", event.target.scrollTop);
+        this.pageOffset += this.pageLimit;
+        this.getLogs();
+      }
+    },
     highlight(data) {
       //console.log("********", this.searchKey, data);
       if (!this.searchKey) return data;
@@ -70,46 +78,47 @@ export default {
       const el = this.$refs.logviewer;
       if (el) {
         // Use el.scrollIntoView() to instantly scroll to the element
-        el.scrollIntoView({ behavior: "smooth" });
+        console.log("scroll to end");
+        el.scrollIntoView({ block: "end" });
       }
     },
-    searchHandle() {
-      this.nothingFound = false;
-      clearInterval(this.reload);
+    getLogs() {
+      this.loadingLogs = true;
       api.logs
-        .getSearchContent(this.getSelectedLog, this.searchKey, this.pageLimit)
+        .getSearchContent(
+          this.getSelectedLog,
+          this.searchKey,
+          this.pageLimit,
+          this.pageOffset
+        )
         .then((res) => {
+          this.loadingLogs = false;
           if (!res.data) {
             this.nothingFound = true;
             return;
           }
           this.logcontent = res.data;
+          this.scrollToElement();
         })
         .catch((err) => {
           console.log(err);
         });
     },
+    searchHandle() {
+      this.nothingFound = false;
+      clearInterval(this.reload);
+      this.getLogs();
+    },
     changeLog() {
       this.nothingFound = false;
       this.searchKey = "";
-      api.logs
-        .getLogContent(this.getSelectedLog, this.pageOffset, this.pageLimit)
-        .then((res) => {
-          if (!res.data.Content) {
-            this.nothingFound = true;
-            return;
-          }
-          this.logcontent = res.data.Content;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      this.getLogs();
     },
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
       clearInterval(this.reload);
-      //console.log(oldValue, newValue);
+      console.log(oldValue, newValue);
       this.changeLog();
       // this.reload = setInterval(() => {
       //   this.changeLog();
@@ -122,7 +131,6 @@ export default {
     //   this.changeLog();
     //   this.scrollToElement();
     // }, 5000);
-    this.scrollToElement();
   },
 };
 </script>
