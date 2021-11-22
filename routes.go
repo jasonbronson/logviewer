@@ -43,12 +43,12 @@ func Router(newRelicApp *newrelic.Application) http.Handler {
 	// 	pprof.Register(router, "debug")
 	// }
 
-	router.GET("/", transport.HealthCheck)
-	router.GET("/healthz", transport.HealthCheck)
+	//router.GET("/", transport.HealthCheck)
+	//router.GET("/healthz", transport.HealthCheck)
 
 	api := router.Group("/api")
 	{
-		api.GET("/logs", transport.GetLogFiles)
+		api.GET("/logs/", transport.GetLogFiles)
 		api.GET("/logs/:filename", transport.GetLogContent)
 		api.GET("/logs/search/:filename", transport.SearchLog)
 	}
