@@ -19,7 +19,7 @@ func GetLogContent(g *gin.Context) {
 	fileName := g.Param("filename")
 	limit := g.Query("pageLimit")
 	offset := g.Query("pageOffset")
-	var logFile Log
+	//var logFile Log
 	//var res []string
 
 	// get lastest log line
@@ -37,12 +37,8 @@ func GetLogContent(g *gin.Context) {
 	// if len(res) >= 20 {
 	// 	res = res[len(res)-limitLine:]
 	// }
-	logFile = Log{
-		Name:    fileName,
-		Content: res,
-	}
-	g.Writer.Header().Set("Content-Type", "application/json")
-	g.JSON(http.StatusOK, logFile)
+
+	response(g, http.StatusOK, len(res), fileName, res)
 }
 
 func GetLogFiles(g *gin.Context) {
@@ -75,7 +71,7 @@ func SearchLog(g *gin.Context) {
 	// 	res = res[len(res)-limitLine:]
 	// }
 
-	g.JSON(http.StatusOK, res)
+	response(g, http.StatusOK, len(res), fileName, res)
 }
 
 func getLogData(fileName, searchKey string, pageLimit int, pageOffset int) []string {
@@ -90,9 +86,13 @@ func getLogData(fileName, searchKey string, pageLimit int, pageOffset int) []str
 		log.Fatal(err)
 	}
 
-	var pos int
+	var pos, seekPosition int
 	totalLines, _ := lineCounter(fileName)
-	seekPosition := totalLines - pageOffset
+	if pageOffset > totalLines {
+		return nil
+	} else {
+		seekPosition = totalLines - pageOffset
+	}
 	log.Println("seek", seekPosition, "count ", totalLines)
 	scanner.Split(func(data []byte, atEof bool) (advance int, token []byte, err error) {
 		advance, token, err = bufio.ScanLines(data, atEof)
@@ -158,11 +158,22 @@ func lineCounter(fileName string) (int, error) {
 	}
 }
 
+func response(g *gin.Context, code, totalrows int, fileName string, data []string) {
+	g.Writer.Header().Set("Content-Type", "application/json")
+	output := Log{
+		Name:    fileName,
+		Content: data,
+		Total:   totalrows,
+	}
+	g.JSON(code, output)
+}
+
 type Logs struct {
 	Logs []Log `json:"logs"`
 }
 
 type Log struct {
 	Name    string   `json:"Name"`
-	Content []string `json:"content`
+	Content []string `json:"Content`
+	Total   int      `json:"Total"`
 }

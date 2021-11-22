@@ -1,16 +1,16 @@
 import { instance as axios } from "../plugins/axios";
 
 export const logs = {
-  async getLogs(table, pageOffset, pageLimit) {
+  async getLogs(logName, pageLimit, pageOffset) {
     try {
       let paging = "";
-      if(table == undefined){
-        table = "";
+      if(logName == undefined){
+        logName = "";
       }else{
         paging = `?pageOffset=${pageOffset}&pageLimit=${pageLimit}`
       }
       return await axios.get(
-        `/logs${table}${paging}`
+        `/logs/${logName}${paging}`
       );
     } catch (err) {
       if (err.response) {

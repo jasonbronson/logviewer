@@ -48,6 +48,7 @@ export default {
       searchKey: "",
       nothingFound: false,
       loadingLogs: false,
+      scrollFetch: false,
     };
   },
   computed: {
@@ -57,10 +58,14 @@ export default {
   },
   methods: {
     handleScroll(event) {
-      if (!this.loadingLogs && event.target.scrollTop < 80) {
+      if (
+        !this.scrollFetch &&
+        !this.loadingLogs &&
+        event.target.scrollTop < 80
+      ) {
         console.log("scrolling ", event.target.scrollTop);
         this.pageOffset += this.pageLimit;
-        this.getLogs();
+        this.getMoreLogs();
       }
     },
     highlight(data) {
@@ -82,6 +87,23 @@ export default {
         el.scrollIntoView({ block: "end" });
       }
     },
+    getMoreLogs() {
+      this.loadingLogs = true;
+      api.logs
+        .getLogs(this.getSelectedLog, this.pageLimit, this.pageOffset)
+        .then((res) => {
+          this.loadingLogs = false;
+          if (res.data.Total == 0) {
+            this.scrollFetch = true;
+            return;
+          }
+          this.logcontent = res.data.Content;
+          this.scrollToElement();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     getLogs() {
       this.loadingLogs = true;
       api.logs
@@ -93,11 +115,11 @@ export default {
         )
         .then((res) => {
           this.loadingLogs = false;
-          if (!res.data) {
+          if (res.data.Total == 0) {
             this.nothingFound = true;
             return;
           }
-          this.logcontent = res.data;
+          this.logcontent = res.data.Content;
           this.scrollToElement();
         })
         .catch((err) => {
@@ -106,11 +128,14 @@ export default {
     },
     searchHandle() {
       this.nothingFound = false;
+      this.scrollFetch = false;
       clearInterval(this.reload);
       this.getLogs();
     },
     changeLog() {
+      this.scrollFetch = false;
       this.nothingFound = false;
+      this.pageOffset = 20;
       this.searchKey = "";
       this.getLogs();
     },
