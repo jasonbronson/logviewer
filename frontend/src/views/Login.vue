@@ -69,6 +69,10 @@ export default {
             })
             .catch((err) => {
               console.log(err);
+              this.$notify.error({
+                title: "Error",
+                message: "Email or Password incorrect",
+              });
             });
         } catch (error) {
           console.log("err", error)

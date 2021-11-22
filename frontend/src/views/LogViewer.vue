@@ -8,7 +8,8 @@
         class="content-item"
         ref="logviewer"
       >
-        <span v-html="highlight(content)"></span>
+        <div class="index"><span>{{indexFormat(idx)}}</span></div>
+        <div><span v-html="highlight(content)"></span></div>
       </div>
       <div v-if="nothingFound">
         Nothing Found in Search
@@ -97,7 +98,7 @@ export default {
             this.scrollFetch = true;
             return;
           }
-          this.logcontent = res.data.Content;
+          this.logcontent = res.data.Content.concat(this.logcontent)
           this.scrollToElement();
         })
         .catch((err) => {
@@ -139,6 +140,13 @@ export default {
       this.searchKey = "";
       this.getLogs();
     },
+    indexFormat(i) {
+      let idx = i +1 
+      if (idx < 10) {
+        idx = "0" + idx
+      }
+      return idx
+    }
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
@@ -164,13 +172,16 @@ export default {
   height: 100%;
 }
 .content-body {
-  padding: 0 10px;
   height: 80vh;
   overflow-y: scroll;
 }
 .content-item {
   padding-bottom: 10px;
   text-align: left;
+  display: flex;
+}
+.index{
+  margin-right: 10px;
 }
 .search {
   padding: 10px;
@@ -186,24 +197,24 @@ export default {
   background-color: #c6ddfc;
   border: none;
 }
-.base-time {
-  color: #75715e;
+:deep() .base-time {
+  color: #75715e !important;
 }
-.base-host {
-  color: #c63;
+:deep() .base-host {
+  color: #c63 !important;
   border-color: #c63;
 }
-.base-app {
+:deep() .base-app {
   color: #66d9ef;
   border-color: #66d9ef;
 }
-.base-text {
+:deep() .base-text {
   color: #272822 !important;
 }
-.base-lvl-warn {
+:deep() .base-lvl-warn {
   background-color: #fd971f;
 }
-.base-lvl-error {
+:deep() .base-lvl-error {
   background-color: #f92672;
 }
 </style>
