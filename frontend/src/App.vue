@@ -1,19 +1,26 @@
 <template>
-  <el-container style="border: 1px solid #eee">
-    <el-aside>
-      <sidebar :menu="menu" />
-    </el-aside>
-    <el-container>
-      <el-header>
-        <navbar />
-      </el-header>
+  <div>
+    <el-container style="border: 1px solid #eee" v-if="!loggedin">
       <el-main>
-        <router-view />
+        <login></login>
       </el-main>
-      <div></div>
-      <footerbar />
     </el-container>
-  </el-container>
+    <el-container style="border: 1px solid #eee" v-if="loggedin">
+      <el-aside>
+        <sidebar :menu="menu" />
+      </el-aside>
+      <el-container>
+        <el-header>
+          <navbar />
+        </el-header>
+        <el-main>
+          <router-view />
+        </el-main>
+        <div></div>
+        <footerbar />
+      </el-container>
+    </el-container>
+  </div>
 </template>
 
 <script>
@@ -23,6 +30,7 @@ import { useStore } from "vuex";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Footerbar from "@/components/Footerbar";
+import Login from "@/views/Login";
 
 export default {
   name: "Home",
@@ -30,6 +38,7 @@ export default {
     Footerbar,
     Sidebar,
     Navbar,
+    Login,
   },
   data() {
     return {};
@@ -37,6 +46,9 @@ export default {
   computed: {
     logger() {
       return this.$store.state.logger;
+    },
+    loggedin() {
+      return this.$store.state.isAuthenticated;
     },
   },
   mounted() {},
