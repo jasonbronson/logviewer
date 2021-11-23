@@ -7,5 +7,5 @@ frontend/node_modules
 frontend/dist
 .DS_Store
 file.db
-api
+./api
 logs/*
