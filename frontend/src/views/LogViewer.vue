@@ -71,6 +71,17 @@ export default {
     },
     highlight(data) {
       //console.log("********", this.searchKey, data);
+      let pre = data.split('"-"')[0]
+      let host = pre.split("- -")[0]
+      let time = pre.substring(
+                    data.indexOf("["),
+                    data.indexOf("]") + 1
+                );
+      let text = data.replace(host, "").replace(time, "").replace("- -", "")
+      let content  = `<span class='base-host'> ${host} </span> - -
+                      <span class='base-time'> ${time} </span>
+                      <span class='base-text'> ${text} </span>`
+      data = data.replace(data, content)
       if (!this.searchKey) return data;
       if (data != typeof string) {
         data = data.toString();
