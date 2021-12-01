@@ -62,11 +62,22 @@ export default {
       if (
         !this.scrollFetch &&
         !this.loadingLogs &&
+        this.searchKey == "" &&
         event.target.scrollTop < 80
       ) {
         console.log("scrolling ", event.target.scrollTop);
         this.pageOffset += this.pageLimit;
         this.getMoreLogs();
+      }
+      if (
+        !this.scrollFetch &&
+        !this.loadingLogs &&
+        this.searchKey != "" &&
+        event.target.scrollTop < 80
+      ) {
+        console.log("scrolling ", event.target.scrollTop);
+        this.pageOffset += this.pageLimit;
+        this.getLogs();
       }
     },
     highlight(data) {
@@ -133,6 +144,11 @@ export default {
             this.nothingFound = true;
             return;
           }
+          if (this.searchKey != "") {
+            this.logcontent = res.data.Content.concat(this.logcontent);
+          } else {
+            this.logcontent = res.data.Content;
+          }
           this.logcontent = res.data.Content;
           this.scrollToElement();
         })
@@ -144,6 +160,7 @@ export default {
       this.nothingFound = false;
       this.scrollFetch = false;
       clearInterval(this.reload);
+      this.logcontent = []
       this.getLogs();
     },
     changeLog() {
