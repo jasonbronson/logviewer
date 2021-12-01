@@ -144,7 +144,7 @@ export default {
       this.nothingFound = false;
       this.scrollFetch = false;
       clearInterval(this.reload);
-      this.getMoreLogs();
+      this.getLogs();
     },
     changeLog() {
       this.scrollFetch = false;
