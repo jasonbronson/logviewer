@@ -8,7 +8,7 @@
         class="content-item"
         ref="logviewer"
       >
-        <div class="index"><span>{{indexFormat(idx)}}</span></div>
+        <!-- <div class="index"><span>{{indexFormat(idx)}}</span></div> -->
         <div><span v-html="highlight(content)"></span></div>
       </div>
       <div v-if="nothingFound">
@@ -71,17 +71,17 @@ export default {
     },
     highlight(data) {
       //console.log("********", this.searchKey, data);
-      let pre = data.split('"-"')[0]
-      let host = pre.split("- -")[0]
-      let time = pre.substring(
-                    data.indexOf("["),
-                    data.indexOf("]") + 1
-                );
-      let text = data.replace(host, "").replace(time, "").replace("- -", "")
-      let content  = `<span class='base-host'> ${host} </span> - -
+      let pre = data.split('"-"')[0];
+      let host = pre.split("- -")[0];
+      let time = pre.substring(data.indexOf("["), data.indexOf("]") + 1);
+      let text = data
+        .replace(host, "")
+        .replace(time, "")
+        .replace("- -", "");
+      let content = `<span class='base-host'> ${host} </span> - -
                       <span class='base-time'> ${time} </span>
-                      <span class='base-text'> ${text} </span>`
-      data = data.replace(data, content)
+                      <span class='base-text'> ${text} </span>`;
+      data = data.replace(data, content);
       if (!this.searchKey) return data;
       if (data != typeof string) {
         data = data.toString();
@@ -101,6 +101,7 @@ export default {
     },
     getMoreLogs() {
       this.loadingLogs = true;
+      console.log("getMoreLogs");
       api.logs
         .getLogs(this.getSelectedLog, this.pageLimit, this.pageOffset)
         .then((res) => {
@@ -109,7 +110,7 @@ export default {
             this.scrollFetch = true;
             return;
           }
-          this.logcontent = res.data.Content.concat(this.logcontent)
+          this.logcontent = res.data.Content.concat(this.logcontent);
           this.scrollToElement();
         })
         .catch((err) => {
@@ -117,6 +118,7 @@ export default {
         });
     },
     getLogs() {
+      console.log("getLogs search:", this.searchKey);
       this.loadingLogs = true;
       api.logs
         .getSearchContent(
@@ -152,12 +154,12 @@ export default {
       this.getLogs();
     },
     indexFormat(i) {
-      let idx = i +1 
+      let idx = i + 1;
       if (idx < 10) {
-        idx = "0" + idx
+        idx = "0" + idx;
       }
-      return idx
-    }
+      return idx;
+    },
   },
   watch: {
     getSelectedLog(newValue, oldValue) {
@@ -191,7 +193,7 @@ export default {
   text-align: left;
   display: flex;
 }
-.index{
+.index {
   margin-right: 10px;
 }
 .search {
