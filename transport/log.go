@@ -88,8 +88,11 @@ func getLogData(fileName, searchKey string, pageLimit int, pageOffset int) []str
 
 	var pos, seekPosition int
 	totalLines, _ := lineCounter(fileName)
-	if pageOffset > totalLines {
+	if pageOffset - totalLines > pageLimit{
 		return nil
+	} else if pageOffset > totalLines && pageOffset - totalLines < pageLimit {
+		seekPosition = -1
+		pageLimit = totalLines - pageOffset + pageLimit
 	} else {
 		seekPosition = totalLines - pageOffset
 	}
