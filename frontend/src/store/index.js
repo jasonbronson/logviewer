@@ -1,68 +1,36 @@
-import { createStore } from "vuex";
-import { localstorage } from "../services/storage/localStorageService";
-import jwtDecode from "jwt-decode";
+// import { createStore } from "vuex";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import log from "./log.js"
+import createPersistedState from 'vuex-persistedstate'
+import auth from './auth.js'
 
-const store = createStore({
-  state: {
-    /* User */
-    userName: null,
-    logs: [],
-    selectedLog: "",
-    isAuthenticated: false,
-  },
-  getters: {
-    getLogs(state) {
-      return state.logs;
-    },
-  },
-  mutations: {
-    setSelectedLog(state, value) {
-      state.selectedLog = value;
-    },
-    setLogs(state, value) {
-      state.logs = value;
-    },
-    /* User */
-    user(state, payload) {
-      if (payload.name) {
-        state.userName = payload.name;
-      }
-    },
-    setAuthenticated(state, value) {
-      try {
-        localstorage.setToken(value);
-        let token = jwtDecode(value);
-  
-        if (token) {
-          state.isAuthenticated = true;
-        } else {
-          state.isAuthenticated = false;
-        }
-      } catch (e) {
-        console.log("err", e);
-        state.isAuthenticated = false;
-      }
-    },
-  },
-  actions: {
-    // asideMobileToggle ({ commit, state }, payload = null) {
-    //   const isShow = payload !== null ? payload : !state.isAsideMobileExpanded
-    //   document.getElementById('app').classList[isShow ? 'add' : 'remove']('ml-60')
-    //   document.documentElement.classList[isShow ? 'add' : 'remove']('m-clipped')
-    //   commit('basic', {
-    //     key: 'isAsideMobileExpanded',
-    //     value: isShow
-    //   })
-    // },
-    // formScreenToggle ({ commit, state }, payload) {
-    //   commit('basic', {
-    //     key: 'isFormScreen',
-    //     value: payload
-    //   })
-    //   document.documentElement.classList[payload ? 'add' : 'remove']('form-screen')
-    // }
-  },
-  modules: {},
-});
+// Vue.use(Vuex)
+let _store
 
-export default store;
+const createStore = () => {
+  return (
+    store ||
+    new Vuex.Store({
+      plugins: [
+        createPersistedState({
+          path: ['user'],
+          reducer(val) {
+            if (val === null) {
+              return {}
+            }
+            return val
+          }
+        })
+      ],
+      modules: {
+        log: log,
+        auth: auth,
+      }
+    })
+  )
+}
+
+const store = createStore()
+
+export default store

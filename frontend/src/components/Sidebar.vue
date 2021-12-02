@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     listLogs() {
-      let logs = this.$store.state.logs;
+      let logs = this.$store.state.log.logs;
       if (logs) {
         logs.forEach((log, index) => {
           if (log.Name == this.$store.state.selectedTable) {

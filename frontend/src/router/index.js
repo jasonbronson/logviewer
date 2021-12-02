@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Home";
 import Login from "../views/Login";
 
-import store from "../store";
+import store from "../store/index.js";
 import { localstorage } from "../services/storage/localStorageService";
 const routes = [
   {
@@ -58,7 +58,7 @@ router.beforeEach(function(to, from, next) {
   var aValue = localstorage.getToken();
   store.commit("setAuthenticated", aValue);
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!store.state.isAuthenticated) {
+    if (!store.state.auth.isAuthenticated) {
       next({
         path: "/login",
       });

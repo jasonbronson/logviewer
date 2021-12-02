@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     ...mapState({
-      logs: (state) => state.logs,
+      logs: (state) => state.log.logs,
     }),
     btntext() {
       return this.logs.length > 0 ? "Refresh" : "Load";
@@ -27,30 +27,32 @@ export default {
   },
   methods: {
     ...mapMutations(["setLogs"]),
-    reloadLogs() {
-      api.logs.getLogs().then((response) => {
-        let success = false;
-        if (response.status === 200) {
-          this.setLogs(response.data.logs);
-          success = true;
-          this.$notify({
-            title: "Success",
-            message: "Getting logs succeeded",
-          });
-          if (response.data.logs[0].Name) {
-            let logName = response.data.logs[0].Name;
-            console.log("Selected Log:", logName);
-            this.$store.commit("setSelectedLog", logName);
-            this.$router.push(`/log/${logName}`);
-          }
+    async reloadLogs() {
+      let payload = {
+        logName: "",
+        pageLimit: "",
+        pageOffset: "",
+      }
+      try {
+        var response = await this.$store.dispatch('getLogs', payload)
+        this.setLogs(response.logs);
+        this.$notify({
+          title: "Success",
+          message: "Getting logs succeeded",
+        });
+        if (response.logs[0].Name) {
+          let logName = response.logs[0].Name;
+          console.log("Selected Log:", logName);
+          this.$store.commit("setSelectedLog", logName);
+          this.$router.push(`/log/${logName}`);
         }
-        if (!success) {
-          this.$notify.error({
-            title: "Error",
-            message: "Getting logs failed",
-          });
-        }
-      });
+      } catch(err) {
+        this.$notify.error({
+          title: "Error",
+          message: "Getting logs failed",
+        });
+      }
+      
     },
     // checkDatabase() {
     //   this.axios.get("/databaseinfo").then((response) => {

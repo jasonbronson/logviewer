@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     getSelectedLog() {
-      return this.$store.state.selectedLog;
+      return this.$store.state.log.selectedLog;
     },
   },
   methods: {
@@ -110,51 +110,54 @@ export default {
         el.scrollIntoView({ block: "end" });
       }
     },
-    getMoreLogs() {
+    async getMoreLogs() {
       this.loadingLogs = true;
       console.log("getMoreLogs");
-      api.logs
-        .getLogs(this.getSelectedLog, this.pageLimit, this.pageOffset)
-        .then((res) => {
-          this.loadingLogs = false;
-          if (res.data.Total == 0) {
-            this.scrollFetch = true;
-            return;
-          }
-          this.logcontent = res.data.Content.concat(this.logcontent);
-          this.scrollToElement();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      let payload = {
+        logName: this.getSelectedLog,
+        pageLimit: this.pageLimit,
+        pageOffset: this.pageOffset
+      }
+      try {
+        var res = await this.$store.dispatch('getLogs', payload)
+        this.loadingLogs = false;
+        if (res.Total == 0) {
+          this.scrollFetch = true;
+          return;
+        }
+        this.logcontent = res.Content.concat(this.logcontent);
+        this.scrollToElement();
+      } catch(error) {
+        console.log(error)
+      }
+      
     },
-    getLogs() {
+    async getLogs() {
       console.log("getLogs search:", this.searchKey);
       this.loadingLogs = true;
-      api.logs
-        .getSearchContent(
-          this.getSelectedLog,
-          this.searchKey,
-          this.pageLimit,
-          this.pageOffset
-        )
-        .then((res) => {
-          this.loadingLogs = false;
-          if (res.data.Total == 0) {
-            this.nothingFound = true;
-            return;
-          }
-          if (this.searchKey != "") {
-            this.logcontent = res.data.Content.concat(this.logcontent);
-          } else {
-            this.logcontent = res.data.Content;
-          }
-          this.logcontent = res.data.Content;
-          this.scrollToElement();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      let payload = {
+        filename: this.getSelectedLog,
+        keysearch: this.searchKey,
+        pageLimit: this.pageLimit,
+        pageOffset: this.pageOffset
+      }
+      try {
+        var res = await this.$store.dispatch('getSearchContent', payload)
+        this.loadingLogs = false;
+        if (res.Total == 0) {
+          this.nothingFound = true;
+          return;
+        }
+        if (this.searchKey != "") {
+          this.logcontent = res.Content.concat(this.logcontent);
+        } else {
+          this.logcontent = res.Content;
+        }
+        this.scrollToElement();
+      } catch(error) {
+        console.log(error)
+      }
+
     },
     searchHandle() {
       this.nothingFound = false;

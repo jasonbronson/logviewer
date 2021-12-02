@@ -44,11 +44,11 @@ export default {
     return {};
   },
   computed: {
-    logger() {
-      return this.$store.state.logger;
-    },
+    // logger() {
+    //   return this.$store.state.log.logger;
+    // },
     loggedin() {
-      return this.$store.state.isAuthenticated;
+      return this.$store.state.auth.isAuthenticated;
     },
   },
   mounted() {},
