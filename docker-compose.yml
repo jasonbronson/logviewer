@@ -9,6 +9,7 @@ services:
     volumes:
       - ./:/app
       - ./frontend:/app/dist
+      - /tmp/logs:/app/logs
     ports:
       - "${PORT}:${PORT}"
     env_file:

@@ -4,6 +4,10 @@ This reads a log file for docker logs and displays it on a front end vuejs app. 
 It runs on a docker container itself for both the front end and backend portion.
 
 ## Screenshot
+[![Screen1](https://jmp.sh/l5RH6J4)]()
+
+Filtering data by keywords
+[![Screen2](https://jmp.sh/J6PcTi6)]()
 
 
 ## Quick Start
@@ -16,4 +20,5 @@ It runs on a docker container itself for both the front end and backend portion.
 
 Missing docker-compose? [how to install docker-compose](https://docs.docker.com/compose/install/)
 
+- The system reads a directory from the env file for where the log files are located LOG_DIRECTORY= expects to have an entry otherwise it will look where the binary is running from for ./logs 
 

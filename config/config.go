@@ -43,6 +43,7 @@ type Config struct {
 	NewRelicLicenseKey string
 	NewRelicAppName    string
 	NewRelicApp        *newrelic.Application
+	LogDirectory       string
 }
 
 func init() {
@@ -63,6 +64,7 @@ func initEnv() {
 	Cfg.NewRelicEnabled, _ = strconv.ParseBool(os.Getenv("NEW_RELIC_ENABLED"))
 	Cfg.NewRelicLicenseKey = os.Getenv("NEW_RELIC_LICENSE_KEY")
 	Cfg.NewRelicAppName = os.Getenv("NEW_RELIC_APP_NAME")
+	Cfg.LogDirectory = os.Getenv("LOG_DIRECTORY")
 
 }
 

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jasonbronson/logreader/config"
 )
 
 func GetLogContent(g *gin.Context) {
@@ -43,7 +45,14 @@ func GetLogContent(g *gin.Context) {
 
 func GetLogFiles(g *gin.Context) {
 	//read folder to get filename
-	files, err := ioutil.ReadDir("./logs/")
+	var files []fs.FileInfo
+	var err error
+	if config.Cfg.LogDirectory != "" {
+		files, err = ioutil.ReadDir(config.Cfg.LogDirectory)
+	} else {
+		files, err = ioutil.ReadDir("./logs/")
+	}
+	log.Println("Log files found ", len(files))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,9 +97,9 @@ func getLogData(fileName, searchKey string, pageLimit int, pageOffset int) []str
 
 	var pos, seekPosition int
 	totalLines, _ := lineCounter(fileName)
-	if pageOffset - totalLines > pageLimit{
+	if pageOffset-totalLines > pageLimit {
 		return nil
-	} else if pageOffset > totalLines && pageOffset - totalLines < pageLimit {
+	} else if pageOffset > totalLines && pageOffset-totalLines < pageLimit {
 		seekPosition = -1
 		pageLimit = totalLines - pageOffset + pageLimit
 	} else {
