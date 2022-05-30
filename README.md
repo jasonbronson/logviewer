@@ -4,10 +4,10 @@ This reads a log file for docker logs and displays it on a front end vuejs app. 
 It runs on a docker container itself for both the front end and backend portion.
 
 ## Screenshot
-[![Screen1](https://jmp.sh/l5RH6J4)]()
+[![Screen1](https://github.com/jasonbronson/logviewer/blob/master/screenshots/screenshot1.png?raw=true)]()
 
 Filtering data by keywords
-[![Screen2](https://jmp.sh/J6PcTi6)]()
+[![Screen2](https://github.com/jasonbronson/logviewer/blob/master/screenshots/screenshot2.png?raw=true)]()
 
 
 ## Quick Start
